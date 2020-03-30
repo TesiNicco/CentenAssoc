@@ -7,32 +7,9 @@
 ##############################################
 
 ##########################################################################
-# CREATE FOLDERS FOR PHENOTYPE FILES, COVARIATES FILES AND SAMPLES FILES #
-# OF THE GENOTYPES DATA -- ALSO LINK THE RAW GENOTYPES HERE              #
-# PLEASE PUT GENOTYPES, SAMPLES, PHENOTYPES AND COVARIATES HERE.         #
-# ALSO CREATE A PLINK2 FOLDER WHERE TO STORE THE PGEN FILES. THIS IS     #
-# DONE BECAUSE PLINK1.9 DOES HARD CALLS FROM DOSAGES, AND I DON'T WANT   #
-# ANY NA'S. 								                                             #
-# MAKE SURE THAT VARIANT IDS BETWEEN THE GWAS, THE GENOTYPES AND THE 1K	 #
-# GENOME GENOTYPES ARE THE SAME OTHERWISE WE'LL LOSE SOME STUFF.	       #
-##########################################################################
-mkdir GENO_DATA
-mkdir GENO_DATA/PLINK2
-
-##########################################################################
-# CREATE FOLDERS FOR SCRIPTS                                             #
-##########################################################################
-mkdir BIN
-
-##########################################################################
 # CREATE FOLDERS FOR RESULTS AND INPUT DATA                              #
 ##########################################################################
 mkdir RESULTS
-mkdir INPUTS_OTHER
-
-##########################################################################
-# DONE WITH SETTING UP THE ENVIRONMENT                                   #
-##########################################################################
 
 ##########################################################################
 # START WITH THE ANALYSES                                                #
@@ -134,3 +111,9 @@ Rscript BIN/funcAnnot_GWAScat.R
 mkdir RESULTS/REGIONAL_PLOTS
 mkdir INPUTS_OTHER/RECOMB_RATES
 Rscript BIN/RegionalPlots.R
+
+##########################################################################
+# GENE EXPRESSION -- obtain the gene expression from public datasets and #
+# look up the genes included in the PRS model as well as reported genes. #
+##########################################################################
+Rscript geneExpression.R
