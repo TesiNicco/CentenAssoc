@@ -55,3 +55,7 @@ Please place in `INPUTS_OTHER/CADD/`:
 
 Please place in `INPUTS_OTHER/RECOMB_RATES/`:
 - recombination rates for each chromosome (provided in the repository)
+
+### Once all data is in place and in the correct directory, you can either go through the pipeline manually (in case you want to perform/replicate a specific part of the pipeline), or execute it in block.
+
+Please do not hesitate to contact us at n.tesi@amsterdamumc.nl in case of questions and/or big report.
