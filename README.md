@@ -2,10 +2,9 @@
 Pipeline to perform replication of genetic variants associated with longevity in previous studies by looking at the reported variants, their haplotype, the genes these variants are associated with, and polygenic risk scores.
 
 ## Set-up working environment
-First and (perhaps) most important, we need to set-up the environment with the necessary folders and files. First thing to do is to get the git and all provided files.
-```
-wget https://github.com/TesiNicco/CentenAssoc.git .
-```
+First and (perhaps) most important, we need to set-up the environment with the necessary folders and files. Fortunately, we have done some work for you, so just clone or download the zip archive of this repository, unzip and enter the main folder. You should see a `BIN/` folder containing some R scripts, and a `INPUTS_OTHER/` folder containing additional files. 
+
+*** In order to run the pipeline, you need to download additional annotation files and make sure all tools required are installed and ready to go. ***
 
 
 ### GENO_DATA folder
