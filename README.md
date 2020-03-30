@@ -2,7 +2,11 @@
 Pipeline to perform replication of genetic variants associated with longevity in previous studies by looking at the reported variants, their haplotype, the genes these variants are associated with, and polygenic risk scores.
 
 ## Set-up working environment
-First and (perhaps) most important, we need to set-up the environment with the necessary folders and files. To guide the reader through the set-up, we will do folder-by-folder:
+First and (perhaps) most important, we need to set-up the environment with the necessary folders and files. First thing to do is to get the git and all provided files.
+```
+wget https://github.com/TesiNicco/CentenAssoc.git .
+```
+
 
 ### GENO_DATA folder
 ```
@@ -13,8 +17,10 @@ mkdir GENO_DATA/LD_CLUMPING
 Place in the `GENO_DATA/` folder:
 - Genotype files (PLINK1.9 .bed/.bim/.fam files), together with the relative phenotype, sample and covariates file. The format of the latter three files should be as reported in PLINK website (https://www.cog-genomics.org/plink/1.9/)
 - For the survival analysis, data regarding the survival are required: these include the APOE status of all individuals and the phenotypes of the individuals with follow-up data for the survival analysis. 
+
 Place in the `GENO_DATA/PLINK2/` folder:
 - Genotype files (PLINK2 .pgen/.pvar/.psam files): in principle, this is not strictly necessary as the PRS can also be calculated with the PLINK .bim/.bed/.fam files. However, we noticed that missing values were present when extracting dosages (via the --export A option in PLINK1.9)
+
 Place in the `GENO_DATA/LD_CLUMPING/` folder:
 - Genotype files of the 1000Genome project (Phase 3), european samples only. You can download them from ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/. Selecting only European sample will be important in order to match population. You can look up the samples information and download them from https://www.internationalgenome.org/data-portal/sample. Once data is downloaded, you should convert the VCF files into PLINK. We suggest to create PLINK files with european individuals only, and restrict to variants with minor allele frequency of 1% or higher. This will greatly reduce the size of the genotype files. Strictly speaking, using genotypes from an independent cohort is highly suggestable but not mandatory. In principle, these genotypes are used for the calculation of LD and LD-clumping. You can (although we do not encourage) use your genotypes here.
 
