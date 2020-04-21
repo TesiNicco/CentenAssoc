@@ -122,7 +122,7 @@ Rscript BIN/build_PRS.R [yes/no for single variant association]
 ## step 5 -- make some plots, do the survival analysis with the best model
 Rscript BIN/PRS_plots_and_survival.R
 ## step 6 -- perform functional annotation and GWAS catolog matching
-## perhaps use AnnotateMe at (https://c0c3aac4.ngrok.io) for this
+## AnnotateMe at (https://c0c3aac4.ngrok.io) for this
 Rscript BIN/funcAnnot_GWAScat.R
 
 ##########################################################################
