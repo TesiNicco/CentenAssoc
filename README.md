@@ -5,6 +5,7 @@ Pipeline to perform replication of genetic variants associated with longevity in
 First and (perhaps) most important, we need to set-up the environment with the necessary folders and files. Fortunately, we have done some work for you, so just clone or download the zip archive of this repository, unzip and enter the main folder. You should see a `BIN/` folder containing some R scripts, and a `INPUTS_OTHER/` folder containing additional files. 
 
 ***In order to run the pipeline, you need to download additional annotation files and make sure all tools required are installed and ready to go.***
+***This includes most of the large-size files that are not provided here, such as genotype files, summary statistics and annotation files.***
 
 ## Tools required
 This pipeline has been tested with Unix systems, we therefore don't ensure the correct functioning on Windows systems. To run this pipeline, you need `R` correctly installed and executable on your machine. The list of required packages is checked internally and in case packages are installed.
