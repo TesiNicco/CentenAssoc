@@ -11,35 +11,42 @@ library(survminer)
 
 # PLOT SIGNIFICANCE OF PRS ACROSS THRESHOLDS FOR VARIANT INCLUSION
 ## read input
-d <- read.table("RESULTS/PRS/all_models_stats_maf1pc.txt", h=T)
+d <- read.table("RESULTS/PRS/all_models_stats_maf1pc.txt", h=T, dec=",")
 
-pdf("RESULTS/PRS/prs_significance_maf1pc.pdf", height=10, width=10)
+bitmap("/Users/nicco/Desktop/myPapers/ROAD_TO_THIRD_PAPER/The journals of gerontology/Rebuttal/final_files/figure_1.tiff", width = 5, height = 3.5, units = "in", res = 300, type ="tifflzw")
+postscript("/Users/nicco/Desktop/myPapers/ROAD_TO_THIRD_PAPER/The journals of gerontology/Rebuttal/final_files/figure_1.eps", width = 5, height = 4, horizontal = F, paper = "special", onefile = F)
 colors = pal_npg("nrc", alpha = 0.7)(9)
 colors <- brewer.pal(n = 9, name = "Set1")
-par(mar=c(0, 6, 4, 13))
+colors_dots <- rep("grey80", 9)
+colors_bars <- rep("deepskyblue3", 9)
+par(mar=c(1, 4, 1, 5))
 layout(matrix(c(1, 1, 1,
                 2, 2, 2,
-                2, 2, 2,
-                2, 2, 2), nrow=4, byrow=TRUE))
+                2, 2, 2), nrow=3, byrow=TRUE))
 
-plot(0, 0, pch=16, col="white", xlim=c(1, 9), ylim=c(0, 20000), xaxt="none", 
-     yaxt='none', xlab="", ylab="SNPs", cex.lab=2, bty='n', xpd=T)
-for (x in 1:nrow(d)){
-  rect(xleft = x-0.20, ybottom = 0, xright = x+0.20, ytop = d$number_variants[x], 
-       col = colors[x])
-  text(x = x, y = d$number_variants[x]+1000, cex=1.25, labels = d$number_variants[x], xpd=T)
-  }
-par(mar=c(4, 6, 0, 13))
-plot(0, 0, pch=16, col="white", xlim=c(1, 9), ylim=c(0, 12), xaxt="none", 
-     xlab="PRS", ylab="-log10(P-value)", cex.lab=2, bty='n', cex.axis=1.50)
+plot(0, 0, pch=16, col="white", xlim=c(1, 9), ylim=c(0, 5), xaxt="none", 
+     yaxt='none', xlab="", ylab=expression("# of SNPs"), cex.lab=1, bty='n', xpd=T)
 for (x in seq(1, 10, 10/10)){abline(v=x, lwd=0.5, col="grey80")}
-for (x in seq(0, 12, 12/10)){abline(h=x, lwd=0.5, col="grey80")}
-axis(side = 1, at = seq(1, 9), 
-     labels = c("Reported", "PRS-8", "PRS-7", "PRS-6", "PRS-5", "PRS-4", "PRS-3", "PRS-2", "PRS-1"), cex.axis=1.5)
-points(seq(1, 9), -log10(d$P_apoe), col=colors, pch=16, cex=4, type = "b") 
-points(seq(1, 9), -log10(d$P), col=colors, pch=17, cex=4, type="b") 
-legend(x = 8.25, y = 12, legend = c("with APOE", "without APOE"), 
-       pch=c(16, 17), col="black", cex=2, pt.cex = 2, xpd=T, bty="n")
+for (x in seq(0, 5, 5/4)){abline(h=x, lwd=0.5, col="grey80")}
+for (x in 1:nrow(d)){
+  rect(xleft = x-0.20, ybottom = 0, xright = x+0.20, ytop = log10(d$number_variants[x]), 
+       col = colors_bars[x], lwd=0.60)
+  text(x = x, y = log10(d$number_variants[x])+0.5, cex=0.66, labels = d$number_variants[x], xpd=T)
+  }
+par(mar=c(4, 4, 0, 5))
+plot(0, 0, pch=16, col="white", xlim=c(1, 9), ylim=c(0, 12), xaxt="none", 
+     xlab="PRS", ylab="-log10(P-value)", cex.lab=1, bty='n', cex.axis=0.75)
+for (x in seq(1, 10, 10/10)){abline(v=x, lwd=0.25, col="grey80")}
+for (x in seq(0, 12, 12/10)){abline(h=x, lwd=0.25, col="grey80")}
+labs <- c("Known", "PRS-8", "PRS-7", "PRS-6", "PRS-5", "PRS-4", "PRS-3", "PRS-2", "PRS-1")
+for (i in 1:9){text(x = i, y = -1, labels = labs[i], adj = 1, xpd=T, cex=0.75, srt=45)}
+points(seq(1, 9), -log10(d$P_apoe), col=colors_dots, pch=16, cex=1.25, type = "b") 
+points(seq(1, 9), -log10(d$P), col=colors_dots, pch=17, cex=1.25, type="b")
+# put the interesting dots in red
+points(x=5, y=-log10(d$P[5]), col="red", pch=17, cex=1.25, type = "b") 
+points(x=4, y=-log10(d$P_apoe[4]), col="red", pch=16, cex=1.25, type="b")
+legend(x = 9.25, y = 12, legend = c("APOE Inc.", "APOE Exc."), 
+       pch=c(16, 17), col="black", cex=0.80, pt.cex = 1, xpd=T, bty="n")
 dev.off()
 
 # PLOT ROC CURVE FOR THE DIFFERENT PRS
@@ -273,8 +280,8 @@ function.SurvivalCurve_left_right_truncated_APOE <- function(fit1, cox.binary.ap
   
   #HERE IS THE PLOT
   #graphical parameters
-  layout(matrix(c(1, 1, 1, 2), nrow=4))
-  par(mar=c(5, 11, 2, 4))
+  layout(matrix(c(1,1, 2), nrow=3))
+  par(mar=c(4, 5, 2, 1))
   
   #select minimum and maximum
   gl.min <- min(fit1$time)
@@ -283,19 +290,21 @@ function.SurvivalCurve_left_right_truncated_APOE <- function(fit1, cox.binary.ap
   gl.max <- 105
   
   #empty plot
-  plot(0, 0, type="s", col="white", cex.lab=2, cex.axis=1.50, xlab="Age",
-       ylab="Survival probabilities", xlim=c(gl.min, gl.max), ylim=c(0, 1))
+  plot(0, 0, type="s", col="white", cex.lab=1, cex.axis=0.75, xlab="Age",
+       ylab="Survival probabilities", xlim=c(gl.min, gl.max), ylim=c(0, 1), bty="n")
   
   #grid
-  for (i in seq(gl.min, gl.max, (gl.max-gl.min)/10)){abline(v=i, lwd=0.5, col="grey80")}
-  for (i in seq(0, 1, 0.10)){abline(h=i, lwd=0.5, col="grey80")}
+  for (i in seq(gl.min, gl.max, (gl.max-gl.min)/10)){abline(v=i, lwd=0.25, col="grey80")}
+  for (i in seq(0, 1, 0.10)){abline(h=i, lwd=0.25, col="grey80")}
   
   #then draw polygon
   library(ggsci)
   colz <- pal_lancet(palette = "lanonc")(9)
+  colz <- brewer.pal(9, "Blues")
+  colz <- colz[c(3, 5, 7, 9)]
   for (i in 1:length(l)){ 
     df <- l[[i]]
-    points(df$time, df$surv, col = colz[i], type="s", lwd=5) 
+    points(df$time, df$surv, col = colz[i], type="s", lwd=1) 
     }
 
   low.nonCarr <- l[[1]]
@@ -312,28 +321,31 @@ function.SurvivalCurve_left_right_truncated_APOE <- function(fit1, cox.binary.ap
   high.nonCarr <- high.nonCarr[order(high.nonCarr$diff),]
   high.Carr$diff <- abs(0.5-high.Carr$surv)
   high.Carr <- high.Carr[order(high.Carr$diff),]
-  segments(x0 = 0, y0 = 0.5, x1 = high.nonCarr$time[1], y1 = 0.5, lwd=1.5, lty=2, col="black")
-  segments(x0 = low.nonCarr$time[1], y0 = 0.5, x1 = low.nonCarr$time[1], y1 = 0, lwd=1.5, lty=2, col="black")
-  segments(x0 = low.Carr$time[1], y0 = 0.5, x1 = low.Carr$time[1], y1 = 0, lwd=1.5, lty=2, col="black")
-  segments(x0 = high.Carr$time[1], y0 = 0.5, x1 = high.Carr$time[1], y1 = 0, lwd=1.5, lty=2, col="black")
-  segments(x0 = high.nonCarr$time[1], y0 = 0.5, x1 = high.nonCarr$time[1], y1 = 0, lwd=1.5, lty=2, col="black")
+  segments(x0 = 0, y0 = 0.5, x1 = high.nonCarr$time[1], y1 = 0.5, lwd=0.75, lty=2, col="black")
+  segments(x0 = low.nonCarr$time[1], y0 = 0.5, x1 = low.nonCarr$time[1], y1 = 0, lwd=0.75, lty=2, col="black")
+  segments(x0 = low.Carr$time[1], y0 = 0.5, x1 = low.Carr$time[1], y1 = 0, lwd=0.75, lty=2, col="black")
+  segments(x0 = high.Carr$time[1], y0 = 0.5, x1 = high.Carr$time[1], y1 = 0, lwd=0.75, lty=2, col="black")
+  segments(x0 = high.nonCarr$time[1], y0 = 0.5, x1 = high.nonCarr$time[1], y1 = 0, lwd=0.75, lty=2, col="black")
   
+  # put p50 into a dataframe
+  p50_ages <- data.frame(Group=c("low_Carr", "low_nonCarr", "high_Carr", "high_nonCarr"), age=c(low.Carr$time[1], low.nonCarr$time[1], high.Carr$time[1], high.nonCarr$time[1]))
+  list_p50 <- list(low.nonCarr$time[1], low.Carr$time[1], high.Carr$time[1], high.nonCarr$time[1])
   #pvalue on bottom-right
-  text(x = 55, y = 0.1, labels = paste(expression(p), " = ", round(summary(cox.binary.apoeYesNo)$coefficients[1, 5], 3), sep=""), cex=2.5, adj=0, font=3)
+  text(x = 55, y = 0.1, labels = paste(expression(p), " = ", round(summary(cox.binary.apoeYesNo)$coefficients[1, 5], 3), sep=""), cex=1, adj=0, font=3)
   
   #legend on top-right
-  legend("topright", legend = c("Low-PRS", "Low-PRS APOE4-carrier", "High-PRS", "High-PRS APOE4-carrier"), lwd=5, col=colz[1:4], bty="n", cex=2)
+  legend("topright", legend = c("Low-PRS", "Low-PRS APOE4+", "High-PRS", "High-PRS APOE4+"), lwd=1, col=colz[1:4], bty="n", cex=0.75)
   
   #second plot: numbers at risk
-  par(mar=c(2, 11, 2, 4))
+  par(mar=c(2, 5, 1, 1))
   
   #empty plot
   plot(0, 0, type="s", col="white", cex.lab=1.75, cex.axis=1.50, xlab="",
-       ylab="", xlim=c(gl.min, gl.max), ylim=c(0, 0.5), xaxt="n", yaxt='n')
+       ylab="", xlim=c(gl.min, gl.max), ylim=c(0, 0.5), xaxt="n", yaxt='n', bty="n")
   
   #grid
-  for (i in seq(gl.min, gl.max, (gl.max-gl.min)/10)){abline(v=i, lwd=0.5, col="grey80")}
-  for (i in seq(0, 0.5, (0.5/4))){abline(h=i, lwd=0.5, col="grey80")}
+  for (i in seq(gl.min, gl.max, (gl.max-gl.min)/10)){abline(v=i, lwd=0.25, col="grey80")}
+  for (i in seq(0, 0.5, (0.5/4))){abline(h=i, lwd=0.25, col="grey80")}
   
   #choose where to put numbers
   where <- c(60, 70, 80, 90, 100)
@@ -353,18 +365,18 @@ function.SurvivalCurve_left_right_truncated_APOE <- function(fit1, cox.binary.ap
     n4 <- n4.all[1]
     
     #put data in
-    text(x = i, y = 0.10, labels = n2, font=2, cex=2, col=colz[2])
-    text(x = i, y = 0.20, labels = n1, font=2, cex=2, col=colz[1])
-    text(x = i, y = 0.30, labels = n4, font=2, cex=2, col=colz[4])
-    text(x = i, y = 0.40, labels = n3, font=2, cex=2, col=colz[3])
+    text(x = i, y = 0.10, labels = n2, font=1, cex=0.80, col=colz[2])
+    text(x = i, y = 0.20, labels = n1, font=1, cex=0.80, col=colz[1])
+    text(x = i, y = 0.30, labels = n4, font=1, cex=0.80, col=colz[4])
+    text(x = i, y = 0.40, labels = n3, font=1, cex=0.80, col=colz[3])
   }
   
   #finally put labels on the left
-  text(x = 55, y = 0.55, labels = "Numbers at risk", col="black", cex=1.80, adj=0, xpd=T, font=2)  
-  text(x = 52.5, y = 0.1, labels = "Low-PRS\nAPOE4 carriers", col=colz[2], font=2, adj=1, xpd=T, cex=1.40)
-  text(x = 52.5, y = 0.2, labels = "Low-PRS", col=colz[1], font=2, adj=1, xpd=T, cex=1.40)
-  text(x = 52.5, y = 0.3, labels = "High-PRS\nAPOE4 carriers", col=colz[4], font=2, adj=1, xpd=T, cex=1.40)
-  text(x = 52.5, y = 0.4, labels = "High-PRS", col=colz[3], font=2, adj=1, xpd=T, cex=1.40)
+  text(x = 55, y = 0.51, labels = "Numbers at risk", col="black", cex=0.80, adj=0, xpd=T, font=1)  
+  text(x = 52.5, y = 0.1, labels = "Low-PRS\nAPOE4+", col=colz[2], font=1, adj=1, xpd=T, cex=0.70)
+  text(x = 52.5, y = 0.2, labels = "Low-PRS", col=colz[1], font=1, adj=1, xpd=T, cex=0.70)
+  text(x = 52.5, y = 0.3, labels = "High-PRS\nAPOE4+", col=colz[4], font=1, adj=1, xpd=T, cex=0.70)
+  text(x = 52.5, y = 0.4, labels = "High-PRS", col=colz[3], font=1, adj=1, xpd=T, cex=0.70)
   #dev.off()
 }
 
@@ -377,7 +389,7 @@ fname <- paste("RESULTS/PRS/prs_", mostSign, "_noAPOE.txt", sep="")
 prs <- fread(fname, h=T)
 
 ## read phenotypes
-pheno <- read.table("GENO_DATA/lasa_phenotypes_QCpassed.table", h=T, stringsAsFactors=F, sep="\t")
+pheno <- read.table("INPUTS_OTHER/lasa_phenotypes_QCpassed.table", h=T, stringsAsFactors=F, sep="\t")
 ## reduce phenotype file
 pheno$surv_time <- pheno$age_GWA - pheno$age_baseline
 pheno <- pheno[, c("respnr", "death", "surv_time", "age_baseline", "sex")]
@@ -402,7 +414,14 @@ for (x in quant.vec){
     counter <- counter + 1
 }
 table(dat$Quant)
-  
+
+## exploration here -- try to see whether the HR is lower or larger for females
+apoe.gt <- read.table("INPUTS_OTHER/apoe_genotype_everyone.txt", h=T)
+# add apoe to genotype
+dat <- merge(dat, apoe.gt, by="IID")
+dat$APOE4 <- "no"
+dat$APOE4[which(dat$apoe_geno %in% c("e4/e3", "e4/e4", "e4/e2"))] <- "yes"
+
 ## cox models
 cox.prs <- coxph(surv_object ~ dat$PRS + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$sex)
 summary(cox.prs)
@@ -412,63 +431,92 @@ fit1 <- survfit(surv_object ~ Quant, data = dat)
 
 ## plots
 function.SurvPlot <- function(dat, t1, t2, fit1, cox.prs, surv_object){
-    apoe.gt <- read.table("GENO_DATA/apoe_genotype_everyone.txt", h=T)
+  #apoe.gt <- read.table("GENO_DATA/apoe_genotype_everyone.txt", h=T)
   
-    # add apoe to genotype
-    dat <- merge(dat, apoe.gt, by="IID")
-    dat$APOE4 <- "no"
-    dat$APOE4[which(dat$apoe_geno %in% c("e4/e3", "e4/e4", "e4/e2"))] <- "yes"
- 
-    # make the plot without APOE
-    pdf(t1, height=10, width=10)
-    function.SurvivalCurve_left_right_truncated(fit1, cox.prs)
-    dev.off()
-
-    # also the plot with apoe stratification
-    cox.binary.apoeYesNo <- coxph(surv_object ~ dat$PRS + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$sex + dat$APOE4)
-    fit1 <- survfit(surv_object ~ Quant + APOE4, data = dat)
-
-    pdf(t2, height=10, width=10)
-    function.SurvivalCurve_left_right_truncated_APOE(fit1, cox.binary.apoeYesNo)
-    dev.off()
+  # add apoe to genotype
+  dat <- merge(dat, apoe.gt, by="IID")
+  dat$APOE4 <- "no"
+  dat$APOE4[which(dat$apoe_geno %in% c("e4/e3", "e4/e4", "e4/e2"))] <- "yes"
+  
+  # make the plot without APOE
+  pdf(t1, height=10, width=10)
+  function.SurvivalCurve_left_right_truncated(fit1, cox.prs)
+  dev.off()
+  
+  # also the plot with apoe stratification
+  cox.binary.apoeYesNo <- coxph(surv_object ~ dat$PRS + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$sex + dat$APOE4)
+  fit1 <- survfit(surv_object ~ Quant + APOE4, data = dat)
+  
+  # interaction term of prs and gender
+  cox.binary.apoeYesNo.interaction <- coxph(surv_object ~ dat$PRS * dat$sex + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$APOE4)
+  summary(cox.binary.apoeYesNo.interaction)
+  cox.binary.apoeYesNo.interaction <- coxph(surv_object ~ dat$PRS * dat$APOE4 + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$sex)
+  summary(cox.binary.apoeYesNo.interaction)
+  
+  pdf(t2, height=10, width=10)
+  #pdf("RESULTS/PRS/survPlot_strat.pdf", height=4, width=3.4)
+  #png("RESULTS/PRS/survPlot_strat.png", height=4, width=3.4, units = "in", res=1200)
+  bitmap("/Users/nicco/Desktop/myPapers/ROAD_TO_THIRD_PAPER/The journals of gerontology/Rebuttal/final_files/figure_2.tiff", width = 3.5, height = 5, units = "in", res = 300, type ="tifflzw")
+  postscript("/Users/nicco/Desktop/myPapers/ROAD_TO_THIRD_PAPER/The journals of gerontology/Rebuttal/final_files/figure_2.eps", width = 4, height = 5, horizontal = F, paper = "special", onefile = F)
+  function.SurvivalCurve_left_right_truncated_APOE(fit1, cox.binary.apoeYesNo)
+  dev.off()
 }
 function.SurvPlot(dat, "RESULTS/PRS/survPlot_noAPOE.pdf", "RESULTS/PRS/survPlot_APOE.pdf", fit1, cox.prs, surv_object)
 
-# PLOT CONSISTENCY OF ASSOCIATION OF VARIANTS
-## read actual associations
-d <- fread("RESULTS/PRS/single_variant_all_assoc.txt", h=F)
-colnames(d) <- c("INDEX", "SNP", "A1", "BETA", "SE", "PVALUE", "DIRECTION")
-d <- d[order(d$PVALUE),]
-head(d)
+# final cox
+cox.binary.apoeYesNo <- coxph(surv_object ~ dat$PRS + dat$PC1 + dat$PC2 + dat$PC3 + dat$PC4 + dat$PC5 + dat$sex + dat$APOE4)
+fit1 <- survfit(surv_object ~ Quant + APOE4, data = dat)
+summary(cox.binary.apoeYesNo)
 
-## list all thresholds
-thrs <- c(0.5, 0.05, 0.005, 5e-4, 5e-5, 5e-6, 5e-7, 5e-8)
-
-## function to assign the PRS type
-f_assign_iter <- function(d, thrs){
-    d$PRS <- NA
-    #main loop on files
-    for (i in thrs){
-        #open file
-        fop <- fread(paste("RESULTS/PRS/variants_", i, ".txt", sep=""), h=F)
-        tmp <- str_split_fixed(fop$V1, "_", 2)
-        fop$SNP <- tmp[, 1]
-        d$PRS[which(d$SNP %in% fop$SNP)] <- i        
-    }
-    return(d)
+males <- dat[which(dat$sex == "male"), ]
+females <- dat[which(dat$sex == "female"), ]
+## make separate survival objects
+surv_object_males <- Surv(time = males$age_baseline-min(males$age_baseline), time2 = males$age_baseline+males$surv_time-min(males$age_baseline),
+            event = males$death, type="counting")
+surv_object_females <- Surv(time = females$age_baseline-min(females$age_baseline), time2 = females$age_baseline+females$surv_time-min(females$age_baseline),
+            event = females$death, type="counting")
+## make separate cox models for males and females
+cox.males <- coxph(surv_object_males ~ males$PRS + males$PC1 + males$PC2 + males$PC3 + males$PC4 + males$PC5 + males$APOE4)
+summary(cox.males)
+cox.females <- coxph(surv_object_females ~ females$PRS + females$PC1 + females$PC2 + females$PC3 + females$PC4 + females$PC5 + females$APOE4)
+summary(cox.females)
+## finally, for the plot, make a function to do a forestplot
+forrestPlot <- function(cox.males, cox.females, cox.prs){
+  # define x and y limits
+  xlm <- c(-1, 3)
+  ylm <- c(0, 4)
+  # graphical settings
+  par(mfrow=c(1, 1), mar=c(4, 5, 4, 5))
+  # basic background plot
+  plot(0, 0, pch=16, col="white", bty='none', xaxt='n', yaxt='n', xlab="", ylab="", xlim=xlm, ylim=ylm)
+  # grid
+  for (x in seq(0, 2, 0.5)){ abline(v=x, lwd=0.4, col="grey80") }
+  for (x in seq(0, 4, 0.75)){ segments(x0 = 0, y0= x, x1 = 2, y1 = x, lwd=0.4, col="grey80") }
+  # vertical line at 0
+  abline(v=1, lwd=1.5, lty=1, col="black")
+  text(x=1, y=4.4, labels="Hazard Ratio of PRS", cex=1.50, font=2, xpd=T)
+  # put x-axis
+  axis(side=1, at=seq(0, 2, 0.5), labels=seq(0, 2, 0.5), cex.axis=1.5)
+  # put points
+  segments(x0=exp(summary(cox.males)$coefficients[1, 1]-(1.96*summary(cox.males)$coefficients[1, 3])), y0=1, x1=exp(summary(cox.males)$coefficients[1, 1]+(1.96*summary(cox.males)$coefficients[1, 3])), y1=1, lwd=2.5, col="navy")
+  points(x=exp(cox.males$coefficients[1]), y=1, pch=17, col="navy", cex=1.75)
+  segments(x0=exp(summary(cox.females)$coefficients[1, 1]-(1.96*summary(cox.females)$coefficients[1, 3])), y0=2, x1=exp(summary(cox.females)$coefficients[1, 1]+(1.96*summary(cox.females)$coefficients[1, 3])), y1=2, lwd=2.5, col="pink")
+  points(x=exp(cox.females$coefficients[1]), y=2, pch=18, col="pink", cex=2.5)  
+  segments(x0=exp(summary(cox.prs)$coefficients[1, 1]-(1.96*summary(cox.prs)$coefficients[1, 3])), y0=3, x1=exp(summary(cox.prs)$coefficients[1, 1]+(1.96*summary(cox.prs)$coefficients[1, 3])), y1=3, lwd=2.5, col="coral")
+  points(x=exp(cox.prs$coefficients[1]), y=3, pch=16, col="coral", cex=1.9)
+  # some text
+  text(x=-1.5, y=1, adj=0, labels=paste("Males (N=", cox.males$n, ")", sep=""), col="navy", cex=1.50, font=2, xpd=T)
+  text(x=2.5, y=1, adj=0, labels=paste("p=", round(summary(cox.males)$coefficients[1, 5], 2), sep=""), col="navy", cex=1.20, font=3, xpd=T) 
+  text(x=-1.5, y=2, adj=0, labels=paste("Females (N=", cox.females$n, ")", sep=""), col="pink", cex=1.50, font=2, xpd=T)
+  text(x=2.5, y=2, adj=0, labels=paste("p=", round(summary(cox.females)$coefficients[1, 5], 2), sep=""), col="pink", cex=1.20, font=3, xpd=T) 
+  text(x=-1.5, y=3, adj=0, labels=paste("Combined (N=", cox.males$n+cox.females$n, ")", sep=""), col="coral", cex=1.50, font=2, xpd=T)
+  text(x=2.5, y=3, adj=0, labels=paste("p=", round(summary(cox.prs)$coefficients[1, 5], 2), sep=""), col="coral", cex=1.20, font=3, xpd=T) 
+  
 }
-
-## run function on association dataset
-d.info <- f_assign_iter(d, thrs)
-table(d.info$PRS)
-d.info <- d.info[order(d.info$PVALUE), ]
-xx <- table(d.info$PRS, d.info$DIRECTION)
-df <- data.frame(PRS = c("PRS8", "PRS7", "PRS6", "PRS5", "PRS4", "PRS3", "PRS2", "PRS1"), Same = xx[, 2], Opposite = xx[, 1])
-df$Perc_same <- 0
-for (i in 1:nrow(df)){ df$Perc_same[i] <- df$Same[i]/(df$Same[i]+df$Opposite[i]) }
-colz <- brewer.pal(n=nrow(df), "Set1")
-pdf("RESULTS/PRS/Barplot_variants_direction.pdf", height=7, width=7)
-barplot(df$Perc_same, names=df$PRS, ylim=c(0, 1), ylab="% of variants in the same direction", cex.lab=1.50, col=colz)
+pdf("RESULTS/PRS_ANNOTATION/forrestPlot_male_females_survival.pdf", height=4, width=8)
+forrestPlot(cox.males, cox.females, cox.binary.apoeYesNo)
 dev.off()
-##########################################
 
+############################################
+############################################
+# compare hr of PRS in males and females -- this is done in function: function.SurvPlot
